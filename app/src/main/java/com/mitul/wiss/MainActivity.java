@@ -17,8 +17,9 @@ public class MainActivity extends AppCompatActivity {
     private WifiManager wifiManager;
     private MeasurementMode measurementMode;
     private InstantaneousModeExecutor instantaneousModeExecutor;
-    private IModeExector currentModeExecutor;
     private ContinuousModeExecutor continuousModeExecutor;
+    private BurstModeExecutor burstModeExecutor;
+    private IModeExector currentModeExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.menu_burst:
-                Log.e("OptionChange", "Burst Mode Not Defined!");
-                currentModeExecutor = null;
+                currentModeExecutor = burstModeExecutor;
                 break;
         }
 
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         instantaneousModeExecutor = new InstantaneousModeExecutor(appFields, wifiManager);
         continuousModeExecutor = new ContinuousModeExecutor(appFields, wifiManager);
+        burstModeExecutor = new BurstModeExecutor(appFields, wifiManager);
 
         currentModeExecutor = instantaneousModeExecutor;
     }
