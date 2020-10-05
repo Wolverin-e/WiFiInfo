@@ -17,6 +17,7 @@ public class BurstModeExecutor implements IModeExector {
     private AppFields appFields;
     private WifiManager wifiManager;
     private CountDownTimer countDownTimer;
+    private FetchBtnStatus fetchBtnStatus;
 
     private boolean isRunning;
 
@@ -28,10 +29,11 @@ public class BurstModeExecutor implements IModeExector {
     private String signalScore;
     private String rssi;
 
-    BurstModeExecutor(AppFields _appFields, WifiManager _wifiManager){
+    BurstModeExecutor(AppFields _appFields, WifiManager _wifiManager,FetchBtnStatus _fetchBtnStatus){
         appFields = _appFields;
         wifiManager = _wifiManager;
         isRunning = false;
+        fetchBtnStatus = _fetchBtnStatus;
     }
 
     @SuppressLint("HardwareIds")
@@ -76,6 +78,7 @@ public class BurstModeExecutor implements IModeExector {
         if(isRunning){
             stopExecution();
         } else {
+            fetchBtnStatus.setToStop();
             isRunning = true;
 
             fetchData();
@@ -105,7 +108,9 @@ public class BurstModeExecutor implements IModeExector {
                     signalScore = String.valueOf(Math.round(score))+"%";
                     appFields.setRssi(rssi);
                     appFields.setSignalScore(signalScore);
-                    Log.i("BurstExecLoop:", rssi+signalScore);
+
+                    Log.i("BurstExecLoop:", rssi+" "+signalScore);
+                    postFinishHook();
                 }
             };
 
@@ -115,9 +120,14 @@ public class BurstModeExecutor implements IModeExector {
         Log.i("ContExecution Status", String.valueOf(isRunning));
     }
 
+    private void postFinishHook(){
+        isRunning = false;
+        fetchBtnStatus.setToStart();
+    }
+
     @Override
     public void stopExecution() {
-        isRunning = false;
         countDownTimer.cancel();
+        postFinishHook();
     }
 }

@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private AppFields appFields;
     private WifiManager wifiManager;
     private MeasurementMode measurementMode;
+    private FetchBtnStatus fetchBtnStatus;
 
     private InstantaneousModeExecutor instantaneousModeExecutor;
     private ContinuousModeExecutor continuousModeExecutor;
@@ -40,20 +41,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(measurementMode != MeasurementMode.INSTANTANEOUS){
+            Log.d("MenuItemSelect", "Stopped Prev Execution");
             currentModeExecutor.stopExecution();
         }
 
         switch (item.getItemId()){
             case R.id.menu_instant:
+                fetchBtnStatus.setToMeasure();
                 currentModeExecutor = instantaneousModeExecutor;
+                measurementMode = MeasurementMode.INSTANTANEOUS;
                 break;
 
             case R.id.menu_cont:
+                fetchBtnStatus.setToStart();
                 currentModeExecutor = continuousModeExecutor;
+                measurementMode = MeasurementMode.CONTINUOUS;
                 break;
 
             case R.id.menu_burst:
+                fetchBtnStatus.setToStart();
                 currentModeExecutor = burstModeExecutor;
+                measurementMode = MeasurementMode.BURST;
                 break;
         }
 
@@ -65,10 +73,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         appFields = new AppFields(this);
+        fetchBtnStatus = new FetchBtnStatus(this);
 
         instantaneousModeExecutor = new InstantaneousModeExecutor(appFields, wifiManager);
-        continuousModeExecutor = new ContinuousModeExecutor(appFields, wifiManager);
-        burstModeExecutor = new BurstModeExecutor(appFields, wifiManager);
+        continuousModeExecutor = new ContinuousModeExecutor(appFields, wifiManager, fetchBtnStatus);
+        burstModeExecutor = new BurstModeExecutor(appFields, wifiManager, fetchBtnStatus);
         currentModeExecutor = instantaneousModeExecutor;
     }
 

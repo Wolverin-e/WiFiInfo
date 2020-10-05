@@ -17,6 +17,7 @@ public class ContinuousModeExecutor implements IModeExector{
     private Handler handler;
     private AppFields appFields;
     private WifiManager wifiManager;
+    private FetchBtnStatus fetchBtnStatus;
 
     private boolean isRunning;
 
@@ -28,10 +29,11 @@ public class ContinuousModeExecutor implements IModeExector{
     private String signalScore;
     private String rssi;
 
-    ContinuousModeExecutor(AppFields _appFields, WifiManager _wifiManager){
+    ContinuousModeExecutor(AppFields _appFields, WifiManager _wifiManager, FetchBtnStatus _fetchBtnStatus){
         appFields = _appFields;
         wifiManager = _wifiManager;
         isRunning = false;
+        fetchBtnStatus = _fetchBtnStatus;
     }
 
     @SuppressLint("HardwareIds")
@@ -74,9 +76,9 @@ public class ContinuousModeExecutor implements IModeExector{
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void execute() {
         if(isRunning){
-
             stopExecution();
         } else {
+            fetchBtnStatus.setToStop();
             isRunning = true;
             handlerThread = new HandlerThread("ContUpdateWiSSThread");
             handlerThread.start();
@@ -91,7 +93,7 @@ public class ContinuousModeExecutor implements IModeExector{
                 public void run() {
                     fetchRssiOnly();
                     uploadRssiToUI();
-                    Log.i("ContExecLoop:", "Run");
+                    Log.i("ContExecLoop:", "Running");
                     handler.postDelayed(this, 10);
                 }
             }, 10);
@@ -103,5 +105,6 @@ public class ContinuousModeExecutor implements IModeExector{
     public void stopExecution() {
         isRunning = false;
         handlerThread.quit();
+        fetchBtnStatus.setToStart();
     }
 }
