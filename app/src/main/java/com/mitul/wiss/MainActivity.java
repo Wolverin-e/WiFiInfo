@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(measurementMode == MeasurementMode.CONTINUOUS || measurementMode == MeasurementMode.BURST){
+        if(measurementMode != MeasurementMode.INSTANTANEOUS){
             currentModeExecutor.stopExecution();
         }
 
