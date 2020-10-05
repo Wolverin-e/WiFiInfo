@@ -3,13 +3,16 @@ package com.mitul.wiss;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.util.Log;
-import android.widget.TextView;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 
 import androidx.annotation.RequiresApi;
 
-public class InstantaneousModeExecutor implements IModeExector {
+public class ContinuousModeExecutor implements IModeExector{
 
+    private HandlerThread handlerThread;
+    private Handler handler;
     private AppFields appFields;
     private WifiManager wifiManager;
 
@@ -21,8 +24,7 @@ public class InstantaneousModeExecutor implements IModeExector {
     private String signalScore;
     private String rssi;
 
-
-    InstantaneousModeExecutor(AppFields _appFields, WifiManager _wifiManager){
+    ContinuousModeExecutor(AppFields _appFields, WifiManager _wifiManager){
         appFields = _appFields;
         wifiManager = _wifiManager;
     }
@@ -50,14 +52,47 @@ public class InstantaneousModeExecutor implements IModeExector {
         appFields.rssi.setText(rssi);
     }
 
+    private void fetchRssiOnly(){
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        rssi = String.valueOf(wifiInfo.getRssi())+"dBm";
+        double score = (wifiInfo.getRssi()+127)*100/(max_rssi_dbm+127);
+        signalScore = String.valueOf(Math.round(score))+"%";
+    }
+
+    private void uploadRssiToUI(){
+        appFields.setSignalScore(signalScore);
+        appFields.setRssi(rssi);
+    }
+
     @Override
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void execute(){
+    public void execute() {
+        handlerThread = new HandlerThread("ContUpdateWiSSThread");
+        handlerThread.start();
+        Looper looper = handlerThread.getLooper();
+        handler = new Handler(looper);
+
         fetchData();
         uploadToUI();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    fetchRssiOnly();
+                    uploadRssiToUI();
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void stopExecution() {
+        handlerThread.quit();
     }
 }
