@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private AppFields appFields;
     private WifiManager wifiManager;
     private MeasurementMode measurementMode;
+
     private InstantaneousModeExecutor instantaneousModeExecutor;
     private ContinuousModeExecutor continuousModeExecutor;
     private BurstModeExecutor burstModeExecutor;
@@ -38,11 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(measurementMode == MeasurementMode.CONTINUOUS){
-            currentModeExecutor.stopExecution();
-        }
-
-        if(measurementMode == MeasurementMode.BURST){
+        if(measurementMode == MeasurementMode.CONTINUOUS || measurementMode == MeasurementMode.BURST){
             currentModeExecutor.stopExecution();
         }
 
@@ -67,12 +64,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        AppFields appFields = new AppFields(this);
+        appFields = new AppFields(this);
 
         instantaneousModeExecutor = new InstantaneousModeExecutor(appFields, wifiManager);
         continuousModeExecutor = new ContinuousModeExecutor(appFields, wifiManager);
         burstModeExecutor = new BurstModeExecutor(appFields, wifiManager);
-
         currentModeExecutor = instantaneousModeExecutor;
     }
 

@@ -1,5 +1,6 @@
 package com.mitul.wiss;
 
+import android.annotation.SuppressLint;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -33,6 +34,7 @@ public class ContinuousModeExecutor implements IModeExector{
         isRunning = false;
     }
 
+    @SuppressLint("HardwareIds")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void fetchData(){
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -58,7 +60,7 @@ public class ContinuousModeExecutor implements IModeExector{
 
     private void fetchRssiOnly(){
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        rssi = String.valueOf(wifiInfo.getRssi())+"dBm";
+        rssi = String.valueOf(wifiInfo.getRssi())+" dBm";
         double score = (wifiInfo.getRssi()+127)*100/(max_rssi_dbm+127);
         signalScore = String.valueOf(Math.round(score))+"%";
     }

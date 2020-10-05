@@ -1,19 +1,15 @@
 package com.mitul.wiss;
 
+import android.annotation.SuppressLint;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class BurstModeExecutor implements IModeExector {
@@ -38,6 +34,7 @@ public class BurstModeExecutor implements IModeExector {
         isRunning = false;
     }
 
+    @SuppressLint("HardwareIds")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void fetchData(){
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -86,7 +83,7 @@ public class BurstModeExecutor implements IModeExector {
 
             final List<Integer> rssis = new ArrayList<Integer>();
 
-            countDownTimer = new CountDownTimer(10000, 1000){
+            countDownTimer = new CountDownTimer(5000, 500){
                 @Override
                 public void onTick(long millisUntilFinished) {
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -114,6 +111,7 @@ public class BurstModeExecutor implements IModeExector {
 
             countDownTimer.start();
         }
+
         Log.i("ContExecution Status", String.valueOf(isRunning));
     }
 
