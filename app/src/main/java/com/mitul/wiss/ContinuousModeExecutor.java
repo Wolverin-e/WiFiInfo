@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -15,6 +16,8 @@ public class ContinuousModeExecutor implements IModeExector{
     private Handler handler;
     private AppFields appFields;
     private WifiManager wifiManager;
+
+    private boolean isRunning;
 
     private String ssid;
     private String mac;
@@ -27,6 +30,7 @@ public class ContinuousModeExecutor implements IModeExector{
     ContinuousModeExecutor(AppFields _appFields, WifiManager _wifiManager){
         appFields = _appFields;
         wifiManager = _wifiManager;
+        isRunning = false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -67,32 +71,35 @@ public class ContinuousModeExecutor implements IModeExector{
     @Override
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void execute() {
-        handlerThread = new HandlerThread("ContUpdateWiSSThread");
-        handlerThread.start();
-        Looper looper = handlerThread.getLooper();
-        handler = new Handler(looper);
+        if(isRunning){
 
-        fetchData();
-        uploadToUI();
+            stopExecution();
+        } else {
+            isRunning = true;
+            handlerThread = new HandlerThread("ContUpdateWiSSThread");
+            handlerThread.start();
+            Looper looper = handlerThread.getLooper();
+            handler = new Handler(looper);
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
+            fetchData();
+            uploadToUI();
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
                     fetchRssiOnly();
                     uploadRssiToUI();
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    Log.i("ContExecLoop:", "Run");
+                    handler.postDelayed(this, 10);
                 }
-            }
-        });
+            }, 10);
+        }
+        Log.i("ContExecution Status", String.valueOf(isRunning));
     }
 
     @Override
     public void stopExecution() {
+        isRunning = false;
         handlerThread.quit();
     }
 }
