@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/menu_instant"
+            android:title="@string/menu_instant"
+            android:checked="true"/>
+
+        <item android:id="@+id/menu_cont"
+            android:title="@string/menu_cont" />
+
+        <item android:id="@+id/menu_burst"
+            android:title="@string/menu_burst" />
+    </group>
+</menu>

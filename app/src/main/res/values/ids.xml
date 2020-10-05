@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="rssi_card" type="id"/>
+    <item name="rssi_text" type="id"/>
+
+    <item name="ssid_card" type="id"/>
+    <item name="ssid_text" type="id"/>
+
+    <item name="bssid_card" type="id"/>
+    <item name="bssid_text" type="id"/>
+
+    <item name="mac_card" type="id"/>
+    <item name="mac_text" type="id"/>
+
+    <item name="linkspeed_card" type="id"/>
+    <item name="linkspeed_text" type="id"/>
+
+    <item name="score_card" type="id"/>
+    <item name="score_text" type="id"/>
+
+    <item name="frequency_card" type="id"/>
+    <item name="frequency_text" type="id"/>
+
+    <item name="fetchBtn" type="id"/>
+
+    <item name="menu_cont" type="id"/>
+    <item name="menu_burst" type="id"/>
+    <item name="menu_instant" type="id"/>
+</resources>

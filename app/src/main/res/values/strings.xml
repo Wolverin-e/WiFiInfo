@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">WiSS</string>
+
+    <!--    For a Particular Tile-->
+    <string name="rssi_heading">RSSI</string>
+    <string name="rssi_default">-127 dBm</string>
+
+    <string name="ssid_heading">SSID</string>
+    <string name="ssid_default">WiFiName</string>
+
+    <string name="bssid_heading">BSSID</string>
+    <string name="bssid_default">02:00:00:00:01:00</string>
+
+    <string name="mac_heading">MAC</string>
+    <string name="mac_default">02:00:00:00:00:00</string>
+
+    <string name="linkspeed_heading">Link Speed</string>
+    <string name="linkspeed_default">105 Mbps</string>
+
+    <string name="frequency_heading">Frequency</string>
+    <string name="frequency_default">2447 MHz</string>
+
+    <string name="score_heading">Signal Score</string>
+    <string name="score_default">60%</string>
+    <string name="fetchbtn_default_text">Measure</string>
+
+    <string name="menu_cont">Continuous</string>
+    <string name="menu_burst">Burst</string>
+    <string name="menu_instant">Instant</string>
+</resources>
