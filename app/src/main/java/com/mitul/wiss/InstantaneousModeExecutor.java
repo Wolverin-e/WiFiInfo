@@ -3,8 +3,6 @@ package com.mitul.wiss;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.util.Log;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 

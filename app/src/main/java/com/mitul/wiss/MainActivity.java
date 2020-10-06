@@ -1,9 +1,12 @@
 package com.mitul.wiss;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private WifiManager wifiManager;
     private MeasurementMode measurementMode;
     private FetchBtnStatus fetchBtnStatus;
+    private WiFiWorkflows wiFiWorkflows;
 
     private InstantaneousModeExecutor instantaneousModeExecutor;
     private ContinuousModeExecutor continuousModeExecutor;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         measurementMode = MeasurementMode.INSTANTANEOUS;
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        wiFiWorkflows = new WiFiWorkflows(wifiManager, this);
     }
 
     @Override
@@ -81,8 +86,20 @@ public class MainActivity extends AppCompatActivity {
         currentModeExecutor = instantaneousModeExecutor;
     }
 
-    public void onFetchClick(View v){
+    @Override
+    protected void onStop() {
+        super.onStop();
+        currentModeExecutor.stopExecution();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    public void onFetchClick(@Nullable View v){
         Log.d("FetchBtn", "Clicked");
-        currentModeExecutor.execute();
+        Log.d("CurrentMode", measurementMode.toString());
+        if(wiFiWorkflows.isWiFiConnected()){
+            currentModeExecutor.execute();
+        } else {
+            wiFiWorkflows.showWiFiNotConnected();
+        }
     }
 }
