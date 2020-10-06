@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WiSS</string>
+    <string name="app_name">WiFiInfo</string>
 
     <!--    For a Particular Tile-->
     <string name="rssi_heading">RSSI</string>

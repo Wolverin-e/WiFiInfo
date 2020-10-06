@@ -1,4 +1,4 @@
-package com.mitul.wiss;
+package com.mitul.wifiinfo;
 
 public interface IModeExector {
 

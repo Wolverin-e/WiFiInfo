@@ -1,22 +1,22 @@
-package com.mitul.wiss;
+package com.mitul.wifiinfo;
 
 import android.annotation.SuppressLint;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ContinuousModeExecutor implements IModeExector{
 
-public class BurstModeExecutor implements IModeExector {
-
+    private HandlerThread handlerThread;
+    private Handler handler;
     private AppFields appFields;
     private WifiManager wifiManager;
-    private CountDownTimer countDownTimer;
     private FetchBtnStatus fetchBtnStatus;
 
     private boolean isRunning;
@@ -29,7 +29,7 @@ public class BurstModeExecutor implements IModeExector {
     private String signalScore;
     private String rssi;
 
-    BurstModeExecutor(AppFields _appFields, WifiManager _wifiManager,FetchBtnStatus _fetchBtnStatus){
+    ContinuousModeExecutor(AppFields _appFields, WifiManager _wifiManager, FetchBtnStatus _fetchBtnStatus){
         appFields = _appFields;
         wifiManager = _wifiManager;
         isRunning = false;
@@ -60,69 +60,53 @@ public class BurstModeExecutor implements IModeExector {
         appFields.rssi.setText(rssi);
     }
 
+    private void fetchRssiOnly(){
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        rssi = String.valueOf(wifiInfo.getRssi())+" dBm";
+        double score = (wifiInfo.getRssi()+127)*100/(max_rssi_dbm+127);
+        signalScore = String.valueOf(Math.round(score))+"%";
+    }
+
     private void uploadRssiToUI(){
         appFields.setSignalScore(signalScore);
         appFields.setRssi(rssi);
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void execute() {
         if(isRunning){
             stopExecution();
         } else {
             fetchBtnStatus.setToStop();
             isRunning = true;
+            handlerThread = new HandlerThread("ContUpdateWiSSThread");
+            handlerThread.start();
+            Looper looper = handlerThread.getLooper();
+            handler = new Handler(looper);
 
             fetchData();
             uploadToUI();
 
-            final List<Integer> rssis = new ArrayList<Integer>();
-
-            countDownTimer = new CountDownTimer(5000, 500){
+            handler.postDelayed(new Runnable() {
                 @Override
-                public void onTick(long millisUntilFinished) {
-                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    rssis.add(wifiInfo.getRssi());
-                    Log.i("BurstExecLoop:", String.valueOf(wifiInfo.getRssi()));
-                }
-
-                @Override
-                public void onFinish() {
-                    double avgRssi = 0;
-                    for (int x: rssis){
-                        avgRssi += x;
-                    }
-                    avgRssi /= rssis.size();
-
-                    double score = (avgRssi+127)*100/(max_rssi_dbm+127);
-
-                    rssi = String.valueOf(Math.round(avgRssi))+" dBm";
-                    signalScore = String.valueOf(Math.round(score))+"%";
+                public void run() {
+                    fetchRssiOnly();
                     uploadRssiToUI();
-
-                    Log.i("BurstExecLoop:", rssi+" "+signalScore);
-                    postFinishHook();
+                    Log.i("ContExecLoop:", "Running");
+                    handler.postDelayed(this, 10);
                 }
-            };
-
-            countDownTimer.start();
+            }, 10);
         }
-
         Log.i("ContExecution Status", String.valueOf(isRunning));
-    }
-
-    private void postFinishHook(){
-        isRunning = false;
-        fetchBtnStatus.setToStart();
     }
 
     @Override
     public void stopExecution() {
-        if (isRunning) {
-            countDownTimer.cancel();
-            postFinishHook();
+        if(isRunning) {
+            handlerThread.quit();
+            fetchBtnStatus.setToStart();
+            isRunning = false;
         }
     }
 }

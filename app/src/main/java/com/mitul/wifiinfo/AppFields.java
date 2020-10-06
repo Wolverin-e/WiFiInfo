@@ -1,4 +1,4 @@
-package com.mitul.wiss;
+package com.mitul.wifiinfo;
 
 import android.app.Activity;
 import android.widget.TextView;

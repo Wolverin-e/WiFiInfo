@@ -1,4 +1,4 @@
-package com.mitul.wiss;
+package com.mitul.wifiinfo;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

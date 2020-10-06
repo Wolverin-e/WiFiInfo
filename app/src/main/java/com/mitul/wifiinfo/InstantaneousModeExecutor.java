@@ -1,4 +1,4 @@
-package com.mitul.wiss;
+package com.mitul.wifiinfo;
 
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;

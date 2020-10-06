@@ -1,12 +1,10 @@
-package com.mitul.wiss;
+package com.mitul.wifiinfo;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
