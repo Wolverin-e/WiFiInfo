@@ -35,7 +35,7 @@ public class InstantaneousModeExecutor implements IModeExector {
         linkSpeed = String.valueOf(wifiInfo.getLinkSpeed())+" "+WifiInfo.LINK_SPEED_UNITS;
         frequency = String.valueOf(wifiInfo.getFrequency())+" "+WifiInfo.FREQUENCY_UNITS;
         bssid = wifiInfo.getBSSID();
-        rssi = String.valueOf(wifiInfo.getRssi())+"dBm";
+        rssi = String.valueOf(wifiInfo.getRssi())+" dBm";
         double score = (wifiInfo.getRssi()+127)*100/(max_rssi_dbm+127);
         signalScore = String.valueOf(Math.round(score))+"%";
     }

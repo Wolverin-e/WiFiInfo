@@ -45,7 +45,7 @@ public class BurstModeExecutor implements IModeExector {
         linkSpeed = String.valueOf(wifiInfo.getLinkSpeed())+" "+WifiInfo.LINK_SPEED_UNITS;
         frequency = String.valueOf(wifiInfo.getFrequency())+" "+WifiInfo.FREQUENCY_UNITS;
         bssid = wifiInfo.getBSSID();
-        rssi = String.valueOf(wifiInfo.getRssi())+"dBm";
+        rssi = String.valueOf(wifiInfo.getRssi())+" dBm";
         double score = (wifiInfo.getRssi()+127)*100/(max_rssi_dbm+127);
         signalScore = String.valueOf(Math.round(score))+"%";
     }
@@ -60,17 +60,11 @@ public class BurstModeExecutor implements IModeExector {
         appFields.rssi.setText(rssi);
     }
 
-    private void fetchRssiOnly(){
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        rssi = String.valueOf(wifiInfo.getRssi())+"dBm";
-        double score = (wifiInfo.getRssi()+127)*100/(max_rssi_dbm+127);
-        signalScore = String.valueOf(Math.round(score))+"%";
-    }
-
     private void uploadRssiToUI(){
         appFields.setSignalScore(signalScore);
         appFields.setRssi(rssi);
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -106,8 +100,7 @@ public class BurstModeExecutor implements IModeExector {
 
                     rssi = String.valueOf(Math.round(avgRssi))+" dBm";
                     signalScore = String.valueOf(Math.round(score))+"%";
-                    appFields.setRssi(rssi);
-                    appFields.setSignalScore(signalScore);
+                    uploadRssiToUI();
 
                     Log.i("BurstExecLoop:", rssi+" "+signalScore);
                     postFinishHook();
@@ -127,7 +120,9 @@ public class BurstModeExecutor implements IModeExector {
 
     @Override
     public void stopExecution() {
-        countDownTimer.cancel();
-        postFinishHook();
+        if (isRunning) {
+            countDownTimer.cancel();
+            postFinishHook();
+        }
     }
 }
