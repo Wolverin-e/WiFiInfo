@@ -3,7 +3,7 @@
 Data Communication Project to measure **Wifi Signal Strength** using a mobile phone.
 
 <p align="center">
-<img src=".readme/NormalScreen.png" height="300px">
+<img src=".readme/NormalScreen-min.png" height="300px">
 </p>
 
 ## PROPERTIES SHOWN
@@ -22,5 +22,5 @@ As shown below, WiSS works
 -   BURST -> Get an average  **RSSI**  &  **SCORE**  value over an interval of 5000ms, Sampling-period 500ms.
 
 <p align="center">
-<img src=".readme/ScreenWithModeMenu.png" height="300px">
+<img src=".readme/ScreenWithModeMenu-min.png" height="300px">
 </p>
